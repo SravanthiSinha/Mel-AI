@@ -13,7 +13,8 @@ class TranscriptionController:
     def fetch_transcription(self):
         video_id = request.args.get('video_id')
         index_id = request.args.get('index_id')
-        
+        language = request.args.get('language')
+
         if not video_id or not index_id:
             return jsonify({"error": "Both video_id and index_id are required"}), 400
         
@@ -23,14 +24,13 @@ class TranscriptionController:
             # Extract and join all "value" fields
             full_transcription = ' '.join(item['value'].strip() for item in transcription_data.get('data', []))
             print("Transcription completed")
-            # Get French translation
-            french_translation = self.translation_service.translate_to_french(full_transcription)
+            translation = self.translation_service.translate(full_transcription, language)
             print("Translation completed")
             # Generate speech from French translation
             output_file_name = f"temp_{video_id}.mp3"
             print(f"File name: {output_file_name}")
             print("Text to speech processing.")
-            audio_file_path = self.audio_service.generate_speech(french_translation, output_file_name)
+            audio_file_path = self.audio_service.generate_speech(translation, output_file_name)
             
             response = jsonify({
                 "video_id": video_id,
