@@ -13,13 +13,12 @@ class TranslationService:
         )
         self.deployment_name = "gpt-35-turbo"
     
-    def translate(self, text, language='french'):
+    def translate(self, text, language='French'):
         try:
             messages = [
                 {"role": "system", "content": "You are an expert language translator. You will be given text in English and you will translate it into the desired language."},
                 {"role": "user", "content": f"Translate the following English text to '{language}': '{text}'"}
                 ]
-            
             response = self.client.chat.completions.create(
                 model=self.deployment_name,
                 messages=messages,

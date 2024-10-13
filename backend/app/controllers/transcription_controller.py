@@ -13,7 +13,7 @@ class TranscriptionController:
     def fetch_transcription(self):
         video_id = request.args.get('video_id')
         index_id = request.args.get('index_id')
-        language = request.args.get('language')
+        language = request.args.get('language', 'French')
 
         if not video_id or not index_id:
             return jsonify({"error": "Both video_id and index_id are required"}), 400
@@ -27,7 +27,7 @@ class TranscriptionController:
             translation = self.translation_service.translate(full_transcription, language)
             print("Translation completed")
             # Generate speech from French translation
-            output_file_name = f"temp_{video_id}.mp3"
+            output_file_name = f"dubbed_{video_id}.mp3"
             print(f"File name: {output_file_name}")
             print("Text to speech processing.")
             audio_file_path = self.audio_service.generate_speech(translation, output_file_name)
@@ -36,7 +36,7 @@ class TranscriptionController:
                 "video_id": video_id,
                 "index_id": index_id,
                 "transcription": full_transcription,
-                "french_translation": french_translation,
+                "french_translation": translation,
                 "audio_file": output_file_name
             })
             
